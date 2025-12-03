@@ -30,6 +30,13 @@ int main(){
     memory[10] = 0x89;
     memory[11] = 0xC1;
     
+    // add eax, imm
+    memory[12] = 0x05;
+    memory[13] = 0x05;
+    memory[14] = 0x00;
+    memory[15] = 0x00;
+    memory[16] = 0x00;
+    
     // HLT
     memory[12] = 0xF4;
     
@@ -39,7 +46,15 @@ int main(){
     while(1){
         cpu_step(&cpu, memory);
 
-        printf("EIP=%04X EAX=%08X ECX=%08X\n", cpu.eip, cpu.eax.e, cpu.ecx.e);
+        printf("EIP=%04X  EAX=%08X  ECX=%08X  |  FLAGS: ZF=%d SF=%d CF=%d OF=%d\n",
+              cpu.eip,
+              cpu.eax.e,
+              cpu.ecx.e,
+              cpu.flags.ZF,
+              cpu.flags.SF,
+              cpu.flags.CF,
+              cpu.flags.OF);
+
         if(cpu.eip >= MEM_SIZE) break;
     }
 

@@ -16,6 +16,10 @@ uint32_t read32(uint8_t *mem, uint32_t addr){
         ((uint32_t)mem[addr + 3] << 24);
 }
 
+void update_ZF_SF(struct CPU *cpu, uint32_t res){
+    cpu->flags.ZF = (res == 0);
+    cpu->flags.SF = (res >> 31) & 1;
+}
 
 void cpu_step(struct CPU *cpu, uint8_t *memory) {
     uint8_t opcode = memory[cpu->eip];
@@ -46,6 +50,16 @@ void cpu_step(struct CPU *cpu, uint8_t *memory) {
                 printf("MOV com modrm nao suportado. %02X\n", modrm);
                 exit(1);
             }
+        }
+        
+        case 0x05: { // ADD EAX, imm32
+            uint32_t imm = read32(memory, cpu->eip + 1);
+            uint32_t a = cpu->eax.e;
+            uint32_t res = a + imm;
+            cpu->eax.e = res;
+            update_ZF_SF(cpu, res);
+            cpu->eip += 5;
+            break;
         }
         
         
