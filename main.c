@@ -3,6 +3,9 @@
 #include <string.h>
 #include "cpu.h"
 #include "memory.h"
+#include "disasm.h"
+
+
 
 int main(){
     
@@ -65,7 +68,10 @@ int main(){
     
     while(1){
         cpu_step(&cpu, memory);
+        disassemble(memory, cpu.eip);
 
+
+        /*
         printf("EIP=%04X  EAX=%08X  ECX=%08X  |  FLAGS: ZF=%d SF=%d CF=%d OF=%d\n",
               cpu.eip,
               cpu.eax.e,
@@ -74,8 +80,8 @@ int main(){
               cpu.flags.SF,
               cpu.flags.CF,
               cpu.flags.OF);
-
-        if(cpu.eip >= MEM_SIZE) break;
+        */
+        if(cpu.eip >= MEM_SIZE || memory[cpu.eip] == 0xF4) break; 
     }
 
     return 0;
