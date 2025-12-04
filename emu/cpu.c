@@ -1,3 +1,8 @@
+/*
+ * Intel 64 and IA-32 Architectures Software Developer’s Manual
+ * https://cdrdv2-public.intel.com/868139/325383-089-sdm-vol-2abcd.pdf
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -141,27 +146,40 @@ void cpu_step(struct CPU *cpu, uint8_t *memory) {
         
         
         case 0x74: { // JE/JZ rel8
-            
+            uint8_t offset = mem_read8(memory, cpu->eip + 1);
+           if(cpu->flags.ZF) cpu->eip += offset + 2;
+            else cpu->eip += 2;
+            break;
         }
         
         case 0x75: { // JNE/JNZ rel8
-        
+            uint8_t offset = mem_read8(memory, cpu->eip + 1);
+            if(!cpu->flags.ZF) cpu->eip += offset + 2;
+            else cpu->eip += 2;
+            break;
         }
         
         case 0x50: { // PUSH EAX
- 
+            push32(memory, cpu, cpu->eax.e);
+           cpu->eip += 1;
+           break;
        }
         
-       case 0x58: { // POP EAX 
-       
+       case 0x58: { // POP EAX
+           cpu->eax.e = pop32(memory, cpu);
+           cpu->eip += 1;
+           break;
        }
         
         case 0xE8: { // CALL rel32
-        
+            int32_t rel = mem_read32(memory, cpu->eip + 1);
+           call_rel32(memory, cpu, rel);
+           break;
         }
         
         case 0xC3: { // RET
-        
+            ret(memory, cpu);
+           break;
         }
         
        case 0xF4: {
@@ -176,4 +194,4 @@ void cpu_step(struct CPU *cpu, uint8_t *memory) {
             exit(1);
     }
 }
-
+ 

@@ -18,43 +18,47 @@ int main(){
     memory[3] = 0x00;
     memory[4] = 0x00;
     
-    // mov ecx, 3
+    // mov ecx, 5
     memory[5] = 0xB9;
-    memory[6] = 0x03;
+    memory[6] = 0x05;
     memory[7] = 0x00;
     memory[8] = 0x00;
     memory[9] = 0x00;
     
-    // mov ecx, eax
-    memory[10] = 0x89;
-    memory[11] = 0xC1;
-    
-    // add eax, imm
-    memory[12] = 0x05;
-    memory[13] = 0x05;
-    memory[14] = 0x00;
-    memory[15] = 0x00;
-    memory[16] = 0x00;
-    
-    // add eax, ecx
-    memory[17] = 0x01;
-    memory[18] = 0xC8;
-    
-    // sub eax, ecx
-    memory[19] = 0x29;
-    memory[20] = 0xC8;
-    
     // cmp eax, ecx
-    memory[21] = 0x39;
-    memory[22] = 0xC8;
+    memory[10] = 0x39;
+    memory[11] = 0xC8;
     
     // inc eax
-    memory[23] = 0x40;
+    memory[12] = 0x40;
     // dec eax
-    memory[24] = 0x48;
+    memory[13] = 0x48;
     
+    // add eax, ecx
+    memory[14] = 0x01;
+    memory[15] = 0xC8;
+    
+    // sub eax, ecx
+    memory[16] = 0x29;
+    memory[17] = 0xC8;
+    
+    // add eax, imm
+    memory[18] = 0x05;
+    memory[19] = 0x05;
+    memory[20] = 0x00;
+    memory[21] = 0x00;
+    memory[22] = 0x00;
+    
+     // mov ecx, eax
+    memory[23] = 0x89;
+    memory[24] = 0xC1;
+    
+    // cmp eax, ecx
+    memory[25] = 0x39;
+    memory[26] = 0xC8;
+  
     // HLT
-    memory[25] = 0xF4;
+    memory[27] = 0xF4;
 
 
 
@@ -76,3 +80,4 @@ int main(){
 
     return 0;
 }
+

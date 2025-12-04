@@ -1,3 +1,4 @@
+#include "cpu.h"
 #include "memory.h"
 #include <stdlib.h>
 #include <string.h>
@@ -35,3 +36,27 @@ void mem_write32(uint8_t *mem, uint32_t addr, uint32_t val) {
     mem[addr + 2] = (val >> 16) & 0xFF;
     mem[addr + 3] = (val >> 24) & 0xFF;
 }
+
+
+void push32(uint8_t *mem, struct CPU *cpu, uint32_t val){
+    cpu->esp.e -= 4;
+    mem_write32(mem, cpu->esp.e, val);
+}
+
+
+uint32_t pop32(uint8_t *mem, struct CPU *cpu) {
+    uint32_t val = mem_read32(mem, cpu->esp.e);
+    cpu->esp.e += 4;
+    return val;
+}
+
+void call_rel32(uint8_t *mem, struct CPU *cpu, int32_t rel){
+    push32(mem, cpu, cpu->eip + 5);
+    cpu->eip += rel + 5;
+}
+
+
+void ret(uint8_t *mem, struct CPU *cpu) {
+    cpu->eip = pop32(mem, cpu);
+}
+
