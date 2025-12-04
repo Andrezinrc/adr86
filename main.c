@@ -44,9 +44,19 @@ int main(){
     memory[19] = 0x29;
     memory[20] = 0xC8;
     
-    // HLT
-    memory[21] = 0xF4;   
+    // cmp eax, ecx
+    memory[21] = 0x39;
+    memory[22] = 0xC8;
     
+    // inc eax
+    memory[23] = 0x40;
+    // dec eax
+    memory[24] = 0x48;
+    
+    // HLT
+    memory[25] = 0xF4;
+
+
 
     
     while(1){

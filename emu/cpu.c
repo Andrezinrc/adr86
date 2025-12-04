@@ -106,14 +106,71 @@ void cpu_step(struct CPU *cpu, uint8_t *memory) {
             break;
         }
         
+        case 0x40: { // INC EAX
+            uint32_t res = cpu->eax.e + 1;
+            update_ZF_SF(cpu, res);
+            cpu->eax.e = res;
+            cpu->eip += 1;
+            break;
+        }
         
-        case 0xF4: {
-            printf("Encerrando.\n");
-            exit(1);
+        case 0x48: { // DEC EAX
+            uint32_t res = cpu->eax.e - 1;
+            update_ZF_SF(cpu, res);
+            cpu->eax.e = res;
+            cpu->eip += 1;
+            break;
         }
         
         
-        default:
+        
+        case 0x39: { // CMP EAX, ECX
+            uint8_t modrm = mem_read8(memory, cpu->eip + 1);
+             if(modrm == 0xC8){
+                 uint32_t a = cpu->eax.e;
+                 uint32_t b = cpu->ecx.e;
+                 uint32_t res = a - b;
+                 update_sub_flags(cpu, a, b, res);
+                 cpu->eip += 2;
+             } else {
+                 printf("modrm não suportado para CMP\n");
+                exit(1);
+            }
+           break;
+        }
+        
+        
+        case 0x74: { // JE/JZ rel8
+            
+        }
+        
+        case 0x75: { // JNE/JNZ rel8
+        
+        }
+        
+        case 0x50: { // PUSH EAX
+ 
+       }
+        
+       case 0x58: { // POP EAX 
+       
+       }
+        
+        case 0xE8: { // CALL rel32
+        
+        }
+        
+        case 0xC3: { // RET
+        
+        }
+        
+       case 0xF4: {
+            printf("Encerrando.\n");
+            exit(1);
+       }
+       
+       
+       default:
             printf("Opcode desconhecido em EIP=0x%08X: 0x%02X\n",
                    cpu->eip, opcode);
             exit(1);
