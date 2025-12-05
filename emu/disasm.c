@@ -24,6 +24,50 @@ void disassemble(uint8_t *memory, uint32_t eip) {
             if(modrm == 0xC1) printf("mov ecx, eax\n");
             break;
         }
+         case 0x31: {
+            uint8_t modrm = memory[eip+1];
+            if (modrm == 0xC0) printf("xor eax, eax\n");
+            else if (modrm == 0xC9) printf("xor ecx, ecx\n");
+            else printf("xor ??? (modrm=%02X)\n", modrm);
+            break;
+        }
+
+        case 0x83: {
+            uint8_t modrm = memory[eip+1];
+            int8_t imm = memory[eip+2];
+
+            if (modrm == 0xC0)
+                printf("add eax, %d\n", imm);
+            else if (modrm == 0xE8)
+                printf("sub eax, %d\n", imm);
+            else if (modrm == 0xF8)
+                printf("cmp eax, %d\n", imm);
+            else
+                printf("83 /r op (modrm=%02X, imm=%d)\n", modrm, imm);
+
+            break;
+        }
+
+        case 0x74: {
+            int8_t rel = memory[eip+1];
+            printf("je %d\n", rel);
+            break;
+        }
+
+        case 0x75: {
+            int8_t rel = memory[eip+1];
+            printf("jne %d\n", rel);
+            break;
+        }
+        
+        case 0xEB: {
+            int8_t rel = memory[eip+1];
+            printf("jmp %d\n", rel);
+            break;
+        } 
+        
+        case 0x90: printf("nop\n"); break;
+         case 0xF8: printf("clc\n"); break;
         case 0xF4: printf("hlt\n"); break;
         default: printf("db 0x%02X\n", op);
     }

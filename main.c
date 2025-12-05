@@ -59,9 +59,48 @@ int main(){
     // cmp eax, ecx
     memory[25] = 0x39;
     memory[26] = 0xC8;
+    
+    // xor eax, eax
+    memory[27] = 0x31;
+    memory[28] = 0xC0;
   
+    // mov ecx, eax
+    memory[29] = 0x8B;
+    memory[30] = 0xC1;
+
+    // add eax, 0x05
+    memory[31] = 0x83;
+    memory[32] = 0xC0;
+    memory[33] = 0x05;
+
+    // sub eax, 0x02
+    memory[34] = 0x83;
+    memory[35] = 0xE8;
+    memory[36] = 0x02;
+ 
+    // cmp eax, 0x03
+    memory[37] = 0x83;
+    memory[38] = 0xF8;
+    memory[39] = 0x03;
+
+    // jne +4
+    memory[40] = 0x75;
+    memory[41] = 0x04;
+
+    // add eax, 0x10
+    memory[42] = 0x83;
+    memory[43] = 0xC0;
+    memory[44] = 0x10;
+
+    // nop
+    memory[45] = 0x90;
+
+    // jmp -10 bytes
+    memory[46] = 0xEB;
+    memory[47] = (int8_t)-10;
+    
     // HLT
-    memory[27] = 0xF4;
+    memory[48] = 0xF4;
 
 
 

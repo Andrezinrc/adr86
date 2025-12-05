@@ -2,6 +2,11 @@
  * Intel 64 and IA-32 Architectures Software Developer’s Manual
  * https://cdrdv2-public.intel.com/868139/325383-089-sdm-vol-2abcd.pdf
  */
+ 
+
+/* Minimal ModRM support: only register-to-register forms (0xC0–0xC7).
+ * Memory addressing via ModRM/SIB is intentionally not implemented yet.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -194,6 +199,92 @@ void cpu_step(struct CPU *cpu, uint8_t *memory) {
            break;
         }
         
+        case 0x8B: { // MOV r32, r/m32
+            uint8_t modrm = mem_read8(memory, cpu->eip + 1);
+            if(modrm == 0xC1){ // mov eax, ecx
+               cpu->eax.e = cpu->ecx.e;
+               cpu->eip += 2;
+            } else if(modrm == 0xC8){ // mov ecx, eax
+                cpu->ecx.e = cpu->eax.e;
+                cpu->eip += 2;
+            } else {
+                printf("MOV (8B) modrm nao suportado: %02X\n", modrm);
+               exit(1);
+            }
+            break;
+        }
+        
+        
+        case 0x31: { // XOR r/m32, r32
+            uint8_t modrm = mem_read8(memory, cpu->eip + 1);
+           if (modrm == 0xC0) { // xor eax, eax
+                cpu->eax.e = 0;
+               update_ZF_SF(cpu, 0);
+               cpu->eip += 2;
+            } else if(modrm == 0xC9) { // xor ecx, ecx
+               cpu->ecx.e = 0;
+               update_ZF_SF(cpu, 0);
+               cpu->eip += 2;
+            } else {
+                 printf("XOR nao suportado: %02X\n", modrm);
+               exit(1);
+            }
+            break;
+        }
+        
+        case 0x83: {
+           uint8_t modrm = mem_read8(memory, cpu->eip + 1);
+           int8_t imm = mem_read8(memory, cpu->eip + 2);
+            switch(modrm){
+               case 0xC0: { // add eax, imm8
+                   uint32_t a = cpu->eax.e;
+                   uint32_t res = a + imm;
+                   update_add_flags(cpu, a, imm, res);
+                   cpu->eax.e = res;
+                   cpu->eip += 3;
+                   break;
+               }
+               
+               case 0xE8: { // sub eax, imm8
+                    uint32_t a = cpu->eax.e;
+                    uint32_t res = a - imm;
+                    update_sub_flags(cpu, a, imm, res);
+                    cpu->eax.e = res;
+                    cpu->eip += 3;
+                    break;
+               }
+               
+               
+                case 0xF8: { // cmp eax, imm8
+                   uint32_t a = cpu->eax.e;
+                   uint32_t res = a - imm;
+                   update_sub_flags(cpu, a, imm, res);
+                   cpu->eip += 3;
+                   break;
+               }
+               
+                default:
+                    printf("83 modrm nao suportado: %02X\n", modrm);
+                  exit(1);
+            }
+            break;
+        }
+        
+        case 0xEB: { // JMP rel8
+            int8_t rel = mem_read8(memory, cpu->eip + 1);
+           cpu->eip += rel + 2;
+           break;
+        }
+        
+        case 0x90: { // NOP
+           cpu->eip += 1;
+           break;
+        }
+       case 0xF8: { // CLC
+           cpu->flags.CF = 0;
+           cpu->eip += 1;
+           break;
+       }
        case 0xF4: {
             printf("Encerrando.\n");
             exit(1);
@@ -206,4 +297,4 @@ void cpu_step(struct CPU *cpu, uint8_t *memory) {
             exit(1);
     }
 }
- 
+
