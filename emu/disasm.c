@@ -6,6 +6,7 @@
 
 void disassemble(uint8_t *memory, uint32_t eip) {
     uint8_t op = memory[eip];
+    printf("0x%08X: ", eip);
 
     switch (op) {
         case 0xB8: printf("mov eax, 0x%08X\n",
@@ -50,7 +51,9 @@ void disassemble(uint8_t *memory, uint32_t eip) {
 
         case 0x74: {
             int8_t rel = memory[eip+1];
-            printf("je %d\n", rel);
+            printf("74 %02X          je 0x%08X\n", 
+                   rel & 0xFF, 
+                   eip + 2 + rel);
             break;
         }
 
