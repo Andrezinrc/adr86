@@ -1,5 +1,7 @@
 # adr86
 
+adr86 é um emulador x86 32-bit minimal, escrito em C, focado em execução de instruções e entendimento interno de CPU e debug
+
 Compile:
 
 ```bash
@@ -11,3 +13,5 @@ Execute:
 ```bash
 ./emulator
 ```
+
+Projeto voltado a estudo de arquitetura, emulação e debug, não a compatibilidade completa
